@@ -1,0 +1,12 @@
+version: '2.0'
+services:
+  check:
+    build:
+      context: .
+    volumes:
+      - /etc/:/target/etc
+    env_file: test_envs
+    environment:
+      HOSTFILE: /target/etc/hostname
+      LIMIT: 80
+      SLEEP: 10s

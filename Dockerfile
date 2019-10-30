@@ -1,7 +1,12 @@
-FROM alpine
+FROM bitnami/minideb
 
 ENV HOSTFILE=/target/etc/hostfile
 
-CMD apk --no-cache add curl
+RUN apt-get update \
+	&& apt-get -y install python3 python3-pip \
+	&& rm -Rf /var/lib/apt/lists/* \
+	&& pip3 install slack-webhook
 
-COPY slack-message
+COPY check.sh slack-message /usr/local/bin/
+
+CMD check.sh

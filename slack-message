@@ -1,36 +1,61 @@
-#!/bin/bash
+#!/usr/bin/python3
 
-if [ -z "${SLACK_URL}" ] ; then
-	SLACK_URL=$(cat /etc/slack.url)
-fi
+import os
+import socket
+import sys
+from slack_webhook import Slack
 
-if [ -z "${SLACK_NOTIFY_USERS}" ] ; then
-	SLACK_NOTIFY_USERS=$(cat /etc/slack.notify_users)
-fi
+class Program:
+    def __init__(self):
+        self.icon = ':slack:'
 
-function post_to_slack () {
-  # format message as a code block ```${msg}```
-  SLACK_MESSAGE="\`\`\`$2\`\`\`"
+    def run(self):
+        self.__parseArgs()
+        self.__parseUrl()
+        self.__parseUsers()
+        self.slack = Slack(url=self.url)
+        self.__postMessage()
 
-  case "$1" in
-    INFO)
-      SLACK_ICON=':slack:'
-      ;;
-    WARNING)
-      SLACK_ICON=':warning:'
-      ;;
-    ERROR)
-      SLACK_ICON=':bangbang:'
-      ;;
-    *)
-	  SLACK_MESSAGE="\`\`\`$1 $2\`\`\`"
-      SLACK_ICON=':slack:'
-      ;;
-  esac
+    def __parseArgs(self):
+        args = sys.argv.copy()
+        args.pop(0)
+        icons = {
+                '-slack': ":slack:",
+                '-info': ":slack:",
+                '-warning': ":warning:",
+                '-error': ":bangbang:",
+        }
+            
+        if args[0] in icons:
+            self.icon = icons.get(args[0])
+            args.pop(0)
 
-  curl -X POST --data "payload={\"text\": \"${SLACK_ICON} ${SLACK_NOTIFY_USERS} ${SLACK_MESSAGE}\"}" ${SLACK_URL}
-}
+        self.message = ' '.join(args)
 
-args=( "$@" )
-post_to_slack "${args[0]}" "${args[@]:1}"
-exit 0
+    def __parseUrl(self):
+        assert 'SLACK_URL' in os.environ
+        self.url = os.environ['SLACK_URL']
+
+    def __parseUsers(self):
+        if 'SLACK_NOTIFY_USERS' not in os.environ:
+            self.users = []
+            return
+            
+        self.users = os.environ['SLACK_NOTIFY_USERS'].split(',')
+
+    def __postMessage(self):
+        self.slack.post( text=self.__formatMessage(), link_names=True )
+
+    def __formatMessage(self):
+        return " ".join([
+            self.icon,
+            self.__formatNotifyUsers(),
+            self.message
+        ])
+
+    def __formatNotifyUsers(self):
+        usersWithAt = map(lambda x: '@'+x, self.users);
+        return " ".join( usersWithAt )
+
+p = Program()
+sys.exit( p.run() )
