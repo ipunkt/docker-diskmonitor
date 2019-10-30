@@ -11,3 +11,6 @@ available:
 - `SLACK_NOTIFY_USERS` comma separated list of users to notify whe
 - `SLEEP` time in between checks, defaults to 5m
 - `THRESHOLD` disk usage percent threshold to start warning defaults to 90
+- `HOSTFILE` the file to read the hostname from, dfeaults to /etc/hostname but
+  it is recommended to set this to /target/etc/hostname and have a volume set up
+  `/etc:/target/etc`
