@@ -8,5 +8,5 @@ services:
     env_file: test_envs
     environment:
       HOSTFILE: /target/etc/hostname
-      LIMIT: 80
+      THRESHOLD: 85
       SLEEP: 10s

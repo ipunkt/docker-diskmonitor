@@ -20,6 +20,7 @@ class Program:
         args = sys.argv.copy()
         args.pop(0)
         icons = {
+                '-ok': ":heavy_check_mark:",
                 '-slack': ":slack:",
                 '-info': ":slack:",
                 '-warning': ":warning:",
