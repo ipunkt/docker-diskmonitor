@@ -1,9 +1,12 @@
 #!/bin/sh
 
+if [ ! -z "${ENVIRONMENT}" ] ; then
+	ENVIRONMENT="${ENVIRONMENT}/"
+fi
 SLEEP="${SLEEP:-5m}"
 THRESHOLD="${THRESHOLD:-90}"
 HOSTFILE="${HOSTFILE:-/etc/hostname}"
-HOSTNAME=$(cat $HOSTFILE)
+HOSTNAME="${ENVIRONMENT}$(cat $HOSTFILE)"
 IS_WARNING="false"
 
 while true ; do
