@@ -14,3 +14,5 @@ available:
 - `HOSTFILE` the file to read the hostname from, dfeaults to /etc/hostname but
   it is recommended to set this to /target/etc/hostname and have a volume set up
   `/etc:/target/etc`
+- `ENVIRONMENT` if set it will be added in front of the hostname, example
+  staging/host123
